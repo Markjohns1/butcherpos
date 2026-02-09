@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Inventory</h4>
+  <a href="{{ url_for('inventory_add') }}" class="btn btn-danger btn-sm">Add Meat Item</a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th class="text-center">Unit</th>
+            <th class="text-end">Price / Unit</th>
+            <th class="text-end">Stock</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td class="text-center">{{ item.unit }}</td>
+            <td class="text-end">{{ "%.2f"|format(item.price_per_unit) }}</td>
+            <td class="text-end">{{ "%.2f"|format(item.stock_quantity) }}</td>
+            <td class="text-end">
+              <a href="{{ url_for('inventory_edit', item_id=item.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

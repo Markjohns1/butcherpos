@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+  <h4 class="mb-0">Receipt</h4>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('new_sale') }}" class="btn btn-danger btn-sm">New Sale</a>
+    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">Print</button>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="receipt">
+      <div class="text-center mb-3">
+        <div class="fw-bold">Local Butcher Shop</div>
+        <div class="small text-muted">Sales Receipt</div>
+      </div>
+
+      <div class="small mb-2">
+        <div><strong>Receipt #:</strong> {{ sale.id }}</div>
+        <div><strong>Date:</strong> {{ sale.sale_datetime }}</div>
+        <div><strong>Cashier:</strong> {{ sale.username }}</div>
+        {% if sale.customer_name %}
+        <div><strong>Customer:</strong> {{ sale.customer_name }}</div>
+        {% endif %}
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm mb-2">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th class="text-end">Qty</th>
+              <th class="text-end">Price</th>
+              <th class="text-end">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for it in items %}
+            <tr>
+              <td>{{ it.name }}</td>
+              <td class="text-end">{{ "%.2f"|format(it.quantity) }} {{ it.unit }}</td>
+              <td class="text-end">{{ "%.2f"|format(it.unit_price) }}</td>
+              <td class="text-end">{{ "%.2f"|format(it.line_total) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between border-top pt-2">
+        <div class="fw-bold">Grand Total</div>
+        <div class="fw-bold">{{ "%.2f"|format(sale.total_amount) }}</div>
+      </div>
+
+      <div class="text-center small text-muted mt-3">
+        Thank you for your purchase!
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-danger text-white text-center">
+        <h5 class="mb-0">Butcher Shop Login</h5>
+      </div>
+      <div class="card-body">
+        <form method="post" novalidate>
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required autofocus>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+          <button type="submit" class="btn btn-danger w-100">Login</button>
+        </form>
+        <p class="mt-3 small text-muted">
+          Default admin: <strong>admin / admin123</strong> (change password after first login).
+        </p>
+      </div>
+    </div>
+  </div>
+  </div>
+{% endblock %}
+

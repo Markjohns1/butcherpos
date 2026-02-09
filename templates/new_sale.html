@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">New Sale</h4>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">Back</a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="post" id="saleForm" class="needs-validation" novalidate>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Customer Name (optional)</label>
+          <input class="form-control" name="customer_name" value="{{ customer_name if customer_name else '' }}" placeholder="e.g., Walk-in customer">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cashier</label>
+          <input class="form-control" value="{{ g.user['username'] }}" disabled>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle" id="itemsTable">
+          <thead class="table-light">
+            <tr>
+              <th style="min-width: 220px;">Meat Type</th>
+              <th class="text-end" style="min-width: 120px;">Quantity</th>
+              <th class="text-end" style="min-width: 140px;">Unit Price</th>
+              <th class="text-end" style="min-width: 140px;">Line Total</th>
+              <th class="text-end" style="width: 1%"></th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody">
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <button type="button" class="btn btn-outline-danger" id="addRowBtn">Add Item</button>
+        <div class="text-end">
+          <div class="small text-muted">Grand Total</div>
+          <div class="fs-3 fw-bold" id="grandTotal">0.00</div>
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <div class="d-flex justify-content-end gap-2">
+        <button type="reset" class="btn btn-outline-secondary">Clear</button>
+        <button type="submit" class="btn btn-danger btn-lg">Save Sale &amp; Print Receipt</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<template id="rowTemplate">
+  <tr>
+    <td>
+      <select class="form-select item-select" name="item_id" required>
+        <option value="" selected disabled>Select meat…</option>
+        {% for item in meat_items %}
+        <option value="{{ item.id }}" data-unit="{{ item.unit }}">{{ item.name }} (Stock: {{ "%.2f"|format(item.stock_quantity) }} {{ item.unit }})</option>
+        {% endfor %}
+      </select>
+      <div class="invalid-feedback">Choose a meat item.</div>
+      <div class="small text-muted mt-1 unit-hint"></div>
+    </td>
+    <td class="text-end">
+      <input class="form-control text-end qty-input" name="quantity" inputmode="decimal" placeholder="0" required>
+      <div class="invalid-feedback">Enter quantity &gt; 0.</div>
+    </td>
+    <td class="text-end">
+      <input class="form-control text-end price-input" name="unit_price" inputmode="decimal" placeholder="0.00" required>
+      <div class="invalid-feedback">Enter a valid price.</div>
+    </td>
+    <td class="text-end fw-semibold line-total">0.00</td>
+    <td class="text-end">
+      <button type="button" class="btn btn-sm btn-outline-secondary remove-btn" title="Remove row">Remove</button>
+    </td>
+  </tr>
+</template>
+
+<script>
+  const meatPriceUrl = (id) => `{{ url_for('get_meat_price', item_id=0) }}`.replace("/0/price", `/${id}/price`);
+
+  const itemsBody = document.getElementById("itemsBody");
+  const rowTemplate = document.getElementById("rowTemplate");
+  const addRowBtn = document.getElementById("addRowBtn");
+  const grandTotalEl = document.getElementById("grandTotal");
+  const form = document.getElementById("saleForm");
+
+  function recalc() {
+    let total = 0;
+    for (const row of itemsBody.querySelectorAll("tr")) {
+      const qty = Number(row.querySelector(".qty-input").value || 0);
+      const price = Number(row.querySelector(".price-input").value || 0);
+      const line = qty * price;
+      row.querySelector(".line-total").textContent = window.__butcher.formatMoney(line);
+      total += line;
+    }
+    grandTotalEl.textContent = window.__butcher.formatMoney(total);
+  }
+
+  async function onItemChanged(row) {
+    const select = row.querySelector(".item-select");
+    const unitHint = row.querySelector(".unit-hint");
+    const priceInput = row.querySelector(".price-input");
+    const id = select.value;
+    if (!id) return;
+
+    const selectedOpt = select.options[select.selectedIndex];
+    const unit = selectedOpt?.dataset?.unit || "kg";
+    unitHint.textContent = `Unit: ${unit}`;
+
+    try {
+      const data = await window.__butcher.fetchJson(meatPriceUrl(id));
+      if (!priceInput.value) priceInput.value = data.price_per_unit;
+    } catch (e) {
+      // keep manual entry possible even if fetch fails
+    }
+    recalc();
+  }
+
+  function addRow() {
+    const fragment = rowTemplate.content.cloneNode(true);
+    const row = fragment.querySelector("tr");
+
+    row.querySelector(".remove-btn").addEventListener("click", () => {
+      row.remove();
+      recalc();
+    });
+
+    row.querySelector(".item-select").addEventListener("change", () => onItemChanged(row));
+    row.querySelector(".qty-input").addEventListener("input", recalc);
+    row.querySelector(".price-input").addEventListener("input", recalc);
+
+    itemsBody.appendChild(fragment);
+  }
+
+  addRowBtn.addEventListener("click", addRow);
+
+  // Start with 1 row for speed
+  addRow();
+
+  // Validation
+  form.addEventListener("submit", (event) => {
+    // Custom checks: at least one selected item and qty > 0
+    let ok = form.checkValidity();
+    for (const row of itemsBody.querySelectorAll("tr")) {
+      const qty = Number(row.querySelector(".qty-input").value || 0);
+      if (qty <= 0) ok = false;
+    }
+
+    if (!ok) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    form.classList.add("was-validated");
+  });
+</script>
+{% endblock %}
+

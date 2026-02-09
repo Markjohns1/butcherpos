@@ -1,0 +1,34 @@
+/* General usability */
+body {
+  background: #f7f7f9;
+}
+
+.card {
+  border-radius: 0.75rem;
+}
+
+/* Receipt printing */
+@media print {
+  nav,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  .receipt {
+    width: 72mm; /* common 80mm paper printable width */
+    margin: 0 auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    font-size: 12px;
+  }
+
+  .receipt .table {
+    font-size: 12px;
+  }
+}
+

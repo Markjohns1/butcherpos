@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-light">
+        <strong>{{ "Edit Meat Item" if item else "Add Meat Item" }}</strong>
+      </div>
+      <div class="card-body">
+        <form method="post" class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label class="form-label">Meat Name</label>
+            <input class="form-control" name="name" required value="{{ item.name if item else '' }}">
+            <div class="invalid-feedback">Please enter a meat name.</div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Unit</label>
+              <input class="form-control" name="unit" value="{{ item.unit if item else 'kg' }}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Price / Unit</label>
+              <input class="form-control" name="price_per_unit" inputmode="decimal" required value="{{ item.price_per_unit if item else '' }}">
+              <div class="invalid-feedback">Enter a valid price.</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Stock Quantity</label>
+              <input class="form-control" name="stock_quantity" inputmode="decimal" required value="{{ item.stock_quantity if item else '' }}">
+              <div class="invalid-feedback">Enter a valid stock quantity.</div>
+            </div>
+          </div>
+          <div class="mt-4 d-flex justify-content-between">
+            <a href="{{ url_for('inventory_list') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button class="btn btn-danger" type="submit">{{ "Save Changes" if item else "Add Item" }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Bootstrap validation pattern
+  (() => {
+    const form = document.querySelector(".needs-validation");
+    form.addEventListener("submit", (event) => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add("was-validated");
+    });
+  })();
+</script>
+{% endblock %}
+
