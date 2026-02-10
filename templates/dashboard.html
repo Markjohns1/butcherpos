@@ -5,20 +5,20 @@
   <!-- Header -->
   <div class="col-12 d-flex justify-content-between align-items-center mb-2">
     <div>
-      <h4 class="mb-0 fw-bold">Dashboard</h4>
+      <h4 class="mb-0 fw-bold text-white">Dashboard</h4>
       <div class="text-muted small">Overview for {{ current_year }}</div>
     </div>
-    <div class="bg-surface border rounded p-1 d-flex gap-2 align-items-center small text-muted px-2">
+    <div class="bg-surface border border-secondary rounded p-1 d-flex gap-2 align-items-center small text-muted px-2">
       <i class="fa-regular fa-clock fa-faint"></i> Live
     </div>
   </div>
 
-  <!-- Stats Card -->
+  <!-- Stats Row - STRICTLY FLAT -->
   <div class="col-md-6 col-lg-4">
-    <div class="card h-100 border p-3">
+    <div class="card h-100 border border-secondary bg-surface p-3 shadow-none">
       <div class="d-flex align-items-center justify-content-between mb-2">
         <span class="text-uppercase small fw-bold text-muted letter-spacing-1">Today's Revenue</span>
-        <i class="fa-solid fa-sack-dollar fa-lg text-success opacity-50"></i>
+        <i class="fa-solid fa-sack-dollar fa-lg text-success"></i>
       </div>
       <h2 class="fw-bold mb-0 text-white">KES {{ "%.2f"|format(total_sales) }}</h2>
       <div class="small text-muted mt-1 d-flex gap-1 align-items-center">
@@ -28,24 +28,26 @@
     </div>
   </div>
 
-  <!-- Quick Actions -->
+  <!-- Quick Actions - STRICTLY FLAT -->
   <div class="col-md-6 col-lg-8">
-    <div class="card h-100 border p-3">
+    <div class="card h-100 border border-secondary bg-surface p-3 shadow-none">
       <div class="mb-3">
         <span class="text-uppercase small fw-bold text-muted letter-spacing-1">Quick Actions</span>
       </div>
-      <div class="d-flex flex-wrap gap-2">
-        <a href="{{ url_for('new_sale') }}" class="btn btn-danger d-flex align-items-center gap-2 px-3">
+      <div class="d-flex flex-wrap gap-3">
+        <a href="{{ url_for('new_sale') }}"
+          class="btn btn-danger d-flex align-items-center gap-2 px-4 fw-bold shadow-none border-0 rounded-1">
           <i class="fa-solid fa-plus"></i>
           New Sale
         </a>
-        <a href="{{ url_for('reports') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3">
+        <a href="{{ url_for('reports') }}"
+          class="btn btn-outline-secondary d-flex align-items-center gap-2 px-4 border-secondary text-white shadow-none rounded-1">
           <i class="fa-solid fa-chart-pie fa-faint"></i>
           Reports
         </a>
         {% if g.user.role == 'admin' %}
         <a href="{{ url_for('inventory_list') }}"
-          class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3">
+          class="btn btn-outline-secondary d-flex align-items-center gap-2 px-4 border-secondary text-white shadow-none rounded-1">
           <i class="fa-solid fa-box-open fa-faint"></i>
           Inventory
         </a>
@@ -55,12 +57,13 @@
   </div>
 </div>
 
-<!-- Low Stock Table -->
-<div class="card border mb-4">
-  <div class="card-header bg-transparent d-flex justify-content-between align-items-center py-3 border-bottom">
+<!-- Low Stock Table - STRICTLY FLAT -->
+<div class="card border border-secondary bg-surface mb-4 shadow-none">
+  <div
+    class="card-header bg-transparent d-flex justify-content-between align-items-center py-3 border-bottom border-secondary">
     <div class="d-flex align-items-center gap-2">
-      <i class="fa-solid fa-bell text-warning opacity-75"></i>
-      <span class="fw-bold">Low Stock Alerts</span>
+      <i class="fa-solid fa-bell text-warning"></i>
+      <span class="fw-bold text-white">Low Stock Alerts</span>
     </div>
     {% if low_stock_items %}
     <span class="badge bg-warning text-dark rounded-pill">{{ low_stock_items|length }}</span>
@@ -71,27 +74,26 @@
     <table class="table table-hover table-sm align-middle mb-0">
       <thead class="bg-surface text-uppercase text-muted small">
         <tr>
-          <th class="ps-3 border-0 fw-bold">Item</th>
-          <th class="text-end border-0 fw-bold">Level</th>
-          <th class="text-end pe-3 border-0 fw-bold">Status</th>
+          <th class="ps-3 border-bottom border-secondary fw-bold">Item</th>
+          <th class="text-end border-bottom border-secondary fw-bold">Level</th>
+          <th class="text-end pe-3 border-bottom border-secondary fw-bold">Status</th>
         </tr>
       </thead>
       <tbody>
         {% for item in low_stock_items %}
         <tr>
-          <td class="ps-3 fw-medium text-white">
-            <i class="fa-solid fa-drumstick-bite fa-faint me-2 opacity-25"></i>
+          <td class="ps-3 fw-medium text-white border-bottom border-secondary">
+            <i class="fa-solid fa-drumstick-bite fa-faint me-2 text-muted"></i>
             {{ item.name }}
           </td>
-          <td class="text-end font-monospace text-muted">{{ "%.2f"|format(item.stock_quantity) }}</td>
-          <td class="text-end pe-3">
-            {% if item.stock_quantity <= 5 %} <span
-              class="d-inline-flex align-items-center gap-1 text-danger small fw-bold bg-danger-subtle px-2 py-1 rounded">
+          <td class="text-end font-monospace text-muted border-bottom border-secondary">{{
+            "%.2f"|format(item.stock_quantity) }}</td>
+          <td class="text-end pe-3 border-bottom border-secondary">
+            {% if item.stock_quantity <= 5 %} <span class="text-danger small fw-bold">
               <i class="fa-solid fa-triangle-exclamation"></i> Critical
               </span>
               {% else %}
-              <span
-                class="d-inline-flex align-items-center gap-1 text-warning small fw-bold bg-warning-subtle px-2 py-1 rounded">
+              <span class="text-warning small fw-bold">
                 <i class="fa-solid fa-circle-exclamation"></i> Low
               </span>
               {% endif %}
@@ -102,7 +104,7 @@
     </table>
     {% else %}
     <div class="p-5 text-center text-muted">
-      <i class="fa-solid fa-check-circle fa-2x mb-2 opacity-25"></i>
+      <i class="fa-solid fa-check-circle fa-2x mb-2 text-success opacity-50"></i>
       <p class="mb-0 small">No low stock alerts. Good job!</p>
     </div>
     {% endif %}
@@ -110,30 +112,23 @@
 </div>
 
 <style>
-  .bg-danger-subtle {
-    background-color: rgba(220, 38, 38, 0.15) !important;
-    color: #fca5a5 !important;
+  /* Strictly enforce flat colors locally just in case */
+  .bg-surface {
+    background-color: #18181b !important;
   }
 
-  .bg-warning-subtle {
-    background-color: rgba(217, 119, 6, 0.15) !important;
-    color: #fdba74 !important;
+  .border-secondary {
+    border-color: #3f3f46 !important;
   }
 
-  .opacity-25 {
-    opacity: 0.25;
+  .shadow-none {
+    box-shadow: none !important;
   }
 
-  .opacity-50 {
-    opacity: 0.5;
-  }
-
-  .opacity-75 {
-    opacity: 0.75;
-  }
-
-  .letter-spacing-1 {
-    letter-spacing: 0.5px;
+  .btn-danger {
+    background-image: none !important;
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
   }
 </style>
 {% endblock %}
