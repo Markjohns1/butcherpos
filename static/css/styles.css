@@ -1,31 +1,32 @@
 /* ============================================
-   PRIME CUTS — HIGH CONTRAST DARK THEME
-   Refined Design System - v2 (Contrast Fixes)
+   PRIME CUTS — SOLID FLAT THEME
+   Refined Design System - v3 (No Gradients)
    ============================================ */
 
 :root {
-  /* Brand Colors - Vibrant Red */
+  /* Brand Colors - Solid Red */
   --primary: #ef4444;
-  /* Red-500, brighter for dark bg */
+  /* Red-500 */
   --primary-hover: #dc2626;
   /* Red-600 */
-  --primary-subtle: rgba(239, 68, 68, 0.15);
+  --primary-active: #b91c1c;
+  /* Red-700 */
 
-  /* Neutral Colors - High Contrast Dark Theme */
+  /* Neutral Colors - Flat Dark Theme */
   --bg-body: #09090b;
-  /* Very Dark Gray (almost black) */
+  /* Zinc-950 */
   --bg-surface: #18181b;
-  /* Dark Gray/Zinc-900 */
+  /* Zinc-900 */
   --bg-surface-hover: #27272a;
-  /* Slightly lighter for hover */
+  /* Zinc-800 */
   --bg-border: #3f3f46;
-  /* Zinc-700 (Lighter border for visibility) */
+  /* Zinc-700 */
 
-  /* Text Colors - High Contrast */
+  /* Text Colors */
   --text-main: #f4f4f5;
-  /* Zinc-100 (Bright White-ish) */
+  /* Zinc-100 */
   --text-muted: #a1a1aa;
-  /* Zinc-400 (Light Gray, readable) */
+  /* Zinc-400 */
   --text-inverse: #ffffff;
   /* Pure White */
 
@@ -54,7 +55,7 @@ h6 {
   font-weight: 600;
 }
 
-/* Force light text on common containers to fix contrast issues */
+/* Force light text on common containers */
 .card,
 .modal-content,
 .dropdown-menu,
@@ -67,6 +68,7 @@ h6 {
 /* Navbar */
 .navbar {
   background-color: var(--bg-surface) !important;
+  /* Solid color */
   border-bottom: 1px solid var(--bg-border);
   padding: 0.5rem 1rem;
 }
@@ -85,6 +87,7 @@ h6 {
 .nav-link.active {
   color: var(--text-inverse) !important;
   background-color: var(--bg-surface-hover);
+  /* Solid hover */
 }
 
 /* Cards */
@@ -93,7 +96,7 @@ h6 {
   border: 1px solid var(--bg-border);
   border-radius: var(--radius);
   box-shadow: none;
-  /* Flat design */
+  /* Flat */
   margin-bottom: 1rem;
 }
 
@@ -114,12 +117,12 @@ h6 {
 .form-control,
 .form-select {
   background-color: #000000;
-  /* Black background for inputs */
+  /* Solid Black */
   border: 1px solid var(--bg-border);
   color: var(--text-inverse) !important;
-  /* Force white text */
   font-size: 0.9rem;
   padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
 }
 
 .form-control::placeholder {
@@ -133,25 +136,30 @@ h6 {
   border-color: var(--primary);
   color: var(--text-inverse);
   box-shadow: 0 0 0 1px var(--primary);
+  /* Solid outline */
 }
 
-/* Fix select dropdown arrow for dark mode */
 .form-select {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
 }
 
-/* Buttons */
+/* Buttons - Solid Colors No Gradients */
 .btn {
   font-weight: 500;
   padding: 0.4rem 1rem;
   border-radius: var(--radius);
-  transition: all 0.15s;
+  transition: background-color 0.15s, border-color 0.15s;
+  border: 1px solid transparent;
+  /* default border */
 }
 
+/* Primary Button (Red) */
 .btn-danger {
   background-color: var(--primary);
-  border: 1px solid var(--primary);
+  border-color: var(--primary);
   color: white;
+  background-image: none !important;
+  /* Force remove gradient */
 }
 
 .btn-danger:hover {
@@ -159,10 +167,16 @@ h6 {
   border-color: var(--primary-hover);
 }
 
+.btn-danger:active {
+  background-color: var(--primary-active);
+  border-color: var(--primary-active);
+}
+
+/* Secondary Button (Outline) */
 .btn-outline-secondary {
+  background-color: transparent;
   border-color: var(--bg-border);
   color: var(--text-main);
-  /* Light text */
 }
 
 .btn-outline-secondary:hover {
@@ -180,7 +194,6 @@ h6 {
 
 .table> :not(caption)>*>* {
   background-color: transparent;
-  /* Remove bootstrap defaults */
   border-bottom-color: var(--bg-border);
   color: var(--text-main);
   padding: 0.75rem;
@@ -198,6 +211,35 @@ h6 {
 .table-hover tbody tr:hover>* {
   background-color: var(--bg-surface-hover);
   color: var(--text-inverse);
+}
+
+/* Alerts & Badges - Flat solid colors */
+.alert {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--bg-border);
+  color: var(--text-main);
+  border-radius: var(--radius);
+}
+
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+  border-radius: 4px;
+}
+
+.bg-danger-subtle {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+  color: #fca5a5 !important;
+}
+
+.bg-warning-subtle {
+  background-color: rgba(217, 119, 6, 0.2) !important;
+  color: #fdba74 !important;
+}
+
+.bg-success-subtle {
+  background-color: rgba(22, 163, 74, 0.2) !important;
+  color: #86efac !important;
 }
 
 /* Utilities */
@@ -245,13 +287,14 @@ h6 {
     display: none;
   }
 
+  .btn {
+    display: none;
+  }
+
+  /* Hide buttons on print */
   .bg-surface,
   .bg-body {
     background: white !important;
-  }
-
-  .text-muted {
-    color: #555 !important;
   }
 
   .text-inverse {

@@ -2,56 +2,51 @@
 
 {% block content %}
 <div class="row g-3 mb-4">
-  <!-- Compact Header -->
-  <div class="col-12 d-flex justify-content-between align-items-center">
-    <h4 class="mb-0 fw-bold">Dashboard</h4>
-    <div class="text-muted small">Today: {{ current_year }}</div>
-  </div>
-
-  <!-- Stats Row - Clean Cards, No Gradients -->
-  <div class="col-md-6 col-lg-4">
-    <div class="card h-100 border p-3">
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="text-uppercase small fw-bold text-muted">Today's Revenue</span>
-        <span class="d-inline-flex align-items-center justify-content-center bg-surface-hover rounded-circle"
-          style="width: 32px; height: 32px;">
-          <svg width="16" height="16" class="text-success" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-          </svg>
-        </span>
-      </div>
-      <h3 class="fw-bold mb-0">KES {{ "%.2f"|format(total_sales) }}</h3>
-      <div class="small text-muted mt-1">Live sales tracking</div>
+  <!-- Header -->
+  <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+    <div>
+      <h4 class="mb-0 fw-bold">Dashboard</h4>
+      <div class="text-muted small">Overview for {{ current_year }}</div>
+    </div>
+    <div class="bg-surface border rounded p-1 d-flex gap-2 align-items-center small text-muted px-2">
+      <i class="fa-regular fa-clock fa-faint"></i> Live
     </div>
   </div>
 
+  <!-- Stats Card -->
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100 border p-3">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <span class="text-uppercase small fw-bold text-muted letter-spacing-1">Today's Revenue</span>
+        <i class="fa-solid fa-sack-dollar fa-lg text-success opacity-50"></i>
+      </div>
+      <h2 class="fw-bold mb-0 text-white">KES {{ "%.2f"|format(total_sales) }}</h2>
+      <div class="small text-muted mt-1 d-flex gap-1 align-items-center">
+        <i class="fa-solid fa-arrow-trend-up text-success fa-xs"></i>
+        <span>Sales tracking live</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
   <div class="col-md-6 col-lg-8">
     <div class="card h-100 border p-3">
-      <div class="d-flex align-items-center justify-content-between mb-3">
-        <span class="text-uppercase small fw-bold text-muted">Quick Actions</span>
+      <div class="mb-3">
+        <span class="text-uppercase small fw-bold text-muted letter-spacing-1">Quick Actions</span>
       </div>
-      <div class="d-flex gap-2">
-        <a href="{{ url_for('new_sale') }}" class="btn btn-danger d-flex align-items-center gap-2">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('new_sale') }}" class="btn btn-danger d-flex align-items-center gap-2 px-3">
+          <i class="fa-solid fa-plus"></i>
           New Sale
         </a>
-        <a href="{{ url_for('reports') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <line x1="18" y1="20" x2="18" y2="10" />
-            <line x1="12" y1="20" x2="12" y2="4" />
-            <line x1="6" y1="20" x2="6" y2="14" />
-          </svg>
+        <a href="{{ url_for('reports') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3">
+          <i class="fa-solid fa-chart-pie fa-faint"></i>
           Reports
         </a>
         {% if g.user.role == 'admin' %}
-        <a href="{{ url_for('inventory_list') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6" />
-            <path d="M9 12V6a3 3 0 0 1 6 0v6" />
-          </svg>
+        <a href="{{ url_for('inventory_list') }}"
+          class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3">
+          <i class="fa-solid fa-box-open fa-faint"></i>
           Inventory
         </a>
         {% endif %}
@@ -60,32 +55,45 @@
   </div>
 </div>
 
+<!-- Low Stock Table -->
 <div class="card border mb-4">
-  <div class="card-header bg-transparent d-flex justify-content-between align-items-center py-2">
-    <span class="fw-bold fs-6">Low Stock Alerts</span>
+  <div class="card-header bg-transparent d-flex justify-content-between align-items-center py-3 border-bottom">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fa-solid fa-bell text-warning opacity-75"></i>
+      <span class="fw-bold">Low Stock Alerts</span>
+    </div>
     {% if low_stock_items %}
-    <span class="badge bg-warning text-dark">{{ low_stock_items|length }} items</span>
+    <span class="badge bg-warning text-dark rounded-pill">{{ low_stock_items|length }}</span>
     {% endif %}
   </div>
   <div class="table-responsive">
     {% if low_stock_items %}
-    <table class="table table-hover table-sm">
-      <thead class="bg-surface-hover">
+    <table class="table table-hover table-sm align-middle mb-0">
+      <thead class="bg-surface text-uppercase text-muted small">
         <tr>
-          <th class="ps-3 border-0">Item Name</th>
-          <th class="text-end border-0">Current Stock</th>
-          <th class="text-end pe-3 border-0">Status</th>
+          <th class="ps-3 border-0 fw-bold">Item</th>
+          <th class="text-end border-0 fw-bold">Level</th>
+          <th class="text-end pe-3 border-0 fw-bold">Status</th>
         </tr>
       </thead>
       <tbody>
         {% for item in low_stock_items %}
         <tr>
-          <td class="ps-3 fw-medium">{{ item.name }}</td>
-          <td class="text-end font-monospace">{{ "%.2f"|format(item.stock_quantity) }}</td>
+          <td class="ps-3 fw-medium text-white">
+            <i class="fa-solid fa-drumstick-bite fa-faint me-2 opacity-25"></i>
+            {{ item.name }}
+          </td>
+          <td class="text-end font-monospace text-muted">{{ "%.2f"|format(item.stock_quantity) }}</td>
           <td class="text-end pe-3">
-            {% if item.stock_quantity <= 5 %} <span class="text-danger fw-bold small">CRITICAL</span>
+            {% if item.stock_quantity <= 5 %} <span
+              class="d-inline-flex align-items-center gap-1 text-danger small fw-bold bg-danger-subtle px-2 py-1 rounded">
+              <i class="fa-solid fa-triangle-exclamation"></i> Critical
+              </span>
               {% else %}
-              <span class="text-warning fw-bold small">LOW</span>
+              <span
+                class="d-inline-flex align-items-center gap-1 text-warning small fw-bold bg-warning-subtle px-2 py-1 rounded">
+                <i class="fa-solid fa-circle-exclamation"></i> Low
+              </span>
               {% endif %}
           </td>
         </tr>
@@ -93,17 +101,39 @@
       </tbody>
     </table>
     {% else %}
-    <div class="p-4 text-center text-muted small">
-      All inventory levels are healthy.
+    <div class="p-5 text-center text-muted">
+      <i class="fa-solid fa-check-circle fa-2x mb-2 opacity-25"></i>
+      <p class="mb-0 small">No low stock alerts. Good job!</p>
     </div>
     {% endif %}
   </div>
 </div>
 
 <style>
-  /* Local overrides for compact feel */
-  .bg-surface-hover {
-    background-color: #272727;
+  .bg-danger-subtle {
+    background-color: rgba(220, 38, 38, 0.15) !important;
+    color: #fca5a5 !important;
+  }
+
+  .bg-warning-subtle {
+    background-color: rgba(217, 119, 6, 0.15) !important;
+    color: #fdba74 !important;
+  }
+
+  .opacity-25 {
+    opacity: 0.25;
+  }
+
+  .opacity-50 {
+    opacity: 0.5;
+  }
+
+  .opacity-75 {
+    opacity: 0.75;
+  }
+
+  .letter-spacing-1 {
+    letter-spacing: 0.5px;
   }
 </style>
 {% endblock %}
