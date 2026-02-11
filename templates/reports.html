@@ -46,7 +46,7 @@
 
   <!-- Summary Chart / Table -->
   <div class="col-lg-6 mb-4">
-    <div class="card h-100 border-0 shadow-sm bg-surface-secondary">
+    <div class="card h-100 border-0 shadow-sm bg-surface">
       <div class="card-header border-0 bg-transparent pt-4 pb-0 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold mb-0">Sales Overview</h5>
         <span class="badge bg-danger-subtle text-danger">{{ summary_rows|length }} Days</span>
@@ -65,20 +65,12 @@
             <tbody>
               {% for row in summary_rows %}
               <tr>
-                <td class="fw-medium">{{ row.sale_date }}</td>
-                <td class="text-end text-muted">{{ row.num_sales }}</td>
-                <td class="text-end fw-bold text-white">KES {{ "%.2f"|format(row.total_sales) }}</td>
+                <td class="fw-medium text-white">{{ row['sale_date'] }}</td>
+                <td class="text-end text-muted">{{ row['num_sales'] }}</td>
+                <td class="text-end fw-bold text-white">KES {{ "%.2f"|format(row['total_sales']) }}</td>
               </tr>
               {% endfor %}
             </tbody>
-            <tfoot class="border-top border-secondary">
-              <tr class="fw-bold fs-5">
-                <td class="pt-3">Total</td>
-                <td class="text-end pt-3"></td>
-                <td class="text-end text-danger pt-3">KES {{ "%.2f"|format(summary_rows|sum(attribute='total_sales')) }}
-                </td>
-              </tr>
-            </tfoot>
           </table>
         </div>
         {% else %}
@@ -92,7 +84,7 @@
 
   <!-- Breakdown by Item -->
   <div class="col-lg-6 mb-4">
-    <div class="card h-100 border-0 shadow-sm bg-surface-secondary">
+    <div class="card h-100 border-0 shadow-sm bg-surface">
       <div class="card-header border-0 bg-transparent pt-4 pb-0">
         <h5 class="fw-bold mb-0">Top Products</h5>
       </div>
@@ -110,13 +102,16 @@
             <tbody>
               {% for row in by_item_rows %}
               <tr>
-                <td class="d-flex align-items-center gap-2">
-                  <span class="avatar bg-danger-subtle text-danger rounded-circle p-1"
-                    style="width: 24px; height: 24px; font-size: 12px;">🥩</span>
-                  {{ row.name }}
+                <td class="d-flex align-items-center gap-2 text-white">
+                  <div
+                    class="avatar bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 28px; height: 28px;">
+                    <i class="fa-solid fa-tag fa-xs"></i>
+                  </div>
+                  {{ row['name'] }}
                 </td>
-                <td class="text-end text-muted">{{ "%.1f"|format(row.total_qty) }}</td>
-                <td class="text-end fw-medium">KES {{ "%.2f"|format(row.total_amount) }}</td>
+                <td class="text-end text-muted">{{ "%.1f"|format(row['total_qty']) }}</td>
+                <td class="text-end fw-bold text-white">KES {{ "%.2f"|format(row['total_amount']) }}</td>
               </tr>
               {% endfor %}
             </tbody>

@@ -13,14 +13,17 @@
   /* Red-700 */
 
   /* Neutral Colors - Flat Dark Theme */
-  --bg-body: #09090b;
-  /* Zinc-950 */
-  --bg-surface: #18181b;
-  /* Zinc-900 */
-  --bg-surface-hover: #27272a;
+  --bg-body: #0d0d0f;
+  /* Dark but not black */
+  --bg-surface: #1c1c1f;
+  /* Zinc-800ish - Lighter for contrast */
+  --bg-surface-secondary: #27272a;
   /* Zinc-800 */
-  --bg-border: #3f3f46;
+  --bg-surface-hover: #3f3f46;
   /* Zinc-700 */
+  --bg-border: #3f3f46;
+  /* Zinc-700 - Visible border */
+  --bg-border-faint: #27272a;
 
   /* Text Colors */
   --text-main: #f4f4f5;
@@ -68,8 +71,7 @@ h6 {
 /* Navbar */
 .navbar {
   background-color: var(--bg-surface) !important;
-  /* Solid color */
-  border-bottom: 1px solid var(--bg-border);
+  border-bottom: 1px solid var(--bg-border) !important;
   padding: 0.5rem 1rem;
 }
 
@@ -222,29 +224,49 @@ h6 {
 }
 
 .badge {
-  font-weight: 500;
+  font-weight: 600;
   padding: 0.35em 0.65em;
   border-radius: 4px;
+  letter-spacing: 0.02em;
 }
 
+/* Subtle Badges with better contrast */
 .bg-danger-subtle {
-  background-color: rgba(239, 68, 68, 0.2) !important;
-  color: #fca5a5 !important;
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  /* Red-400 */
 }
 
 .bg-warning-subtle {
-  background-color: rgba(217, 119, 6, 0.2) !important;
-  color: #fdba74 !important;
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+  /* Amber-400 */
 }
 
 .bg-success-subtle {
-  background-color: rgba(22, 163, 74, 0.2) !important;
-  color: #86efac !important;
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  /* Emerald-400 */
+}
+
+.bg-secondary-subtle {
+  background-color: #27272a !important;
+  /* Zinc-800 */
+  color: #f4f4f5 !important;
+  /* Zinc-100 */
 }
 
 /* Utilities */
 .text-muted {
   color: var(--text-muted) !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-success-subtle {
+  color: #34d399 !important;
 }
 
 .bg-body {
@@ -255,8 +277,12 @@ h6 {
   background-color: var(--bg-surface) !important;
 }
 
+.bg-surface-secondary {
+  background-color: var(--bg-surface-secondary) !important;
+}
+
 .border-subtle {
-  border-color: var(--bg-border) !important;
+  border-color: var(--bg-border-faint) !important;
 }
 
 /* Print Overrides */

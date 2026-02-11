@@ -16,17 +16,17 @@
   </div>
 </div>
 
-<div class="card border-0 bg-surface-secondary shadow-sm">
+<div class="card border-0 bg-surface shadow-sm">
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
-        <thead class="bg-surface-elevated text-uppercase text-muted small letter-spacing-1">
+        <thead class="bg-surface-secondary text-uppercase text-white small letter-spacing-1">
           <tr>
-            <th class="ps-4 border-0">Product Name</th>
-            <th class="ps-4 border-0 text-center">Unit</th>
-            <th class="ps-4 border-0 text-end">Price / Unit</th>
-            <th class="ps-4 border-0 text-end">Stock Level</th>
-            <th class="ps-4 border-0 text-end pe-4">Actions</th>
+            <th class="ps-4 border-0 py-3">Product Name</th>
+            <th class="ps-4 border-0 text-center py-3">Unit</th>
+            <th class="ps-4 border-0 text-end py-3">Price / Unit</th>
+            <th class="ps-4 border-0 text-end py-3">Stock Level</th>
+            <th class="ps-4 border-0 text-end pe-4 py-3">Actions</th>
           </tr>
         </thead>
         <tbody class="border-top-0">
@@ -40,11 +40,11 @@
                     <path d="M9 12V6a3 3 0 0 1 6 0v6" />
                   </svg>
                 </div>
-                <span class="fw-medium">{{ item.name }}</span>
+                <span class="fw-medium text-white">{{ item.name }}</span>
               </div>
             </td>
             <td class="text-center">
-              <span class="badge bg-secondary-subtle text-muted text-uppercase fw-normal px-2">{{ item.unit }}</span>
+              <span class="badge bg-secondary-subtle px-2">{{ item.unit }}</span>
             </td>
             <td class="text-end fw-bold text-success-subtle">KES {{ "%.2f"|format(item.price_per_unit) }}</td>
             <td class="text-end">
@@ -80,10 +80,6 @@
 </div>
 
 <style>
-  .bg-surface-elevated {
-    background: #252525;
-  }
-
   .msg-dot {
     width: 6px;
     height: 6px;

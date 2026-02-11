@@ -126,10 +126,11 @@
         display: none;
       }
 
-      /* Desktop Link Vertical Center */
+      /* Desktop Link Vertical Center & No Wrap */
       .nav-link {
         display: flex;
         align-items: center;
+        white-space: nowrap;
       }
     }
   </style>
@@ -138,7 +139,7 @@
 <body>
 
   <!-- Fixed Top Navbar with Offcanvas Toggler -->
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-surface border-bottom shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-surface border-bottom shadow-sm no-print">
     <div class="container-fluid">
       <!-- Brand & Toggler Container -->
       <div class="d-flex align-items-center">
@@ -165,7 +166,7 @@
 
         <div class="offcanvas-body">
           {% if g.user %}
-          <ul class="navbar-nav me-auto ms-lg-4 gap-lg-1">
+          <ul class="navbar-nav me-auto ms-lg-4 gap-lg-4">
             <li class="nav-item">
               <a class="nav-link {{ 'active' if request.endpoint == 'dashboard' else '' }}"
                 href="{{ url_for('dashboard') }}">
@@ -196,7 +197,7 @@
 
           <!-- User Profile - Bottom on Mobile / Right on Desktop -->
           <div
-            class="mt-auto mt-lg-0 border-top border-lg-0 pt-3 pt-lg-0 d-flex align-items-center gap-3 w-100 w-lg-auto justify-content-lg-end">
+            class="mt-auto mt-lg-0 pt-3 pt-lg-0 d-flex align-items-center gap-3 w-100 w-lg-auto justify-content-lg-end border-top-mobile">
             <div class="d-flex align-items-center gap-2 text-muted small px-2 px-lg-0">
               <div
                 class="avatar bg-surface-hover rounded-circle d-flex align-items-center justify-content-center text-muted border border-subtle"
@@ -221,10 +222,19 @@
     </div>
   </nav>
 
+  <style>
+    /* Mobile-only border for the profile section */
+    @media (max-width: 991.98px) {
+      .border-top-mobile {
+        border-top: 1px solid var(--bg-border) !important;
+      }
+    }
+  </style>
+
   <main class="container py-4">
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    <div class="mb-4">
+    <div class="mb-4 no-print">
       {% for category, message in messages %}
       <div
         class="alert alert-{{ category }} alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm border-0"

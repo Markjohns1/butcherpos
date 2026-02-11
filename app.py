@@ -114,21 +114,27 @@ def init_db():
 
 
 def ensure_default_admin():
-    """Create a default admin account if none exist."""
+    """Create default accounts if none exist."""
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) AS c FROM users")
-    count = cur.fetchone()["c"]
-    if count == 0:
+    
+    # Check for admin
+    cur.execute("SELECT COUNT(*) AS c FROM users WHERE username = 'admin'")
+    if cur.fetchone()["c"] == 0:
         cur.execute(
             "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
-            (
-                "admin",
-                generate_password_hash("admin123"),
-                "admin",
-            ),
+            ("admin", generate_password_hash("admin123"), "admin"),
         )
-        conn.commit()
+    
+    # Check for cashier
+    cur.execute("SELECT COUNT(*) AS c FROM users WHERE username = 'cashier'")
+    if cur.fetchone()["c"] == 0:
+        cur.execute(
+            "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+            ("cashier", generate_password_hash("1234"), "cashier"),
+        )
+        
+    conn.commit()
     conn.close()
 
 
@@ -405,6 +411,7 @@ def register_routes(app: Flask) -> None:
     def new_sale():
         conn = get_db()
         cur = conn.cursor()
+        
         cur.execute("SELECT * FROM meat_items ORDER BY name ASC")
         meat_items = cur.fetchall()
 
@@ -422,98 +429,101 @@ def register_routes(app: Flask) -> None:
             if not item_ids:
                 error = "At least one item is required."
 
-            for idx, item_id in enumerate(item_ids):
-                if not item_id:
-                    continue
-                qty_str = quantities[idx]
-                price_str = unit_prices[idx]
-                try:
-                    qty_val = float(qty_str)
-                    price_val = float(price_str)
-                    if qty_val <= 0 or price_val < 0:
-                        error = "Quantity must be positive and price must be non-negative."
+            if not error:
+                for idx, item_id in enumerate(item_ids):
+                    if not item_id:
+                        continue
+                    qty_str = quantities[idx]
+                    price_str = unit_prices[idx]
+                    try:
+                        qty_val = float(qty_str)
+                        price_val = float(price_str)
+                        if qty_val <= 0 or price_val < 0:
+                            error = "Quantity must be positive and price must be non-negative."
+                            break
+                    except ValueError:
+                        error = "Quantity and price must be numeric."
                         break
-                except ValueError:
-                    error = "Quantity and price must be numeric."
-                    break
 
-                conn_item = get_db()
-                cur_item = conn_item.cursor()
-                cur_item.execute(
-                    "SELECT * FROM meat_items WHERE id = ?", (int(item_id),)
-                )
-                item_row = cur_item.fetchone()
-                conn_item.close()
+                    # Fetch item using the EXISTING connection
+                    cur.execute(
+                        "SELECT * FROM meat_items WHERE id = ?", (int(item_id),)
+                    )
+                    item_row = cur.fetchone()
 
-                if item_row is None:
-                    error = "Invalid meat item."
-                    break
+                    if item_row is None:
+                        error = "Invalid meat item."
+                        break
 
-                if qty_val > item_row["stock_quantity"]:
-                    error = f"Not enough stock for {item_row['name']}."
-                    break
+                    if qty_val > item_row["stock_quantity"]:
+                        error = f"Not enough stock for {item_row['name']}."
+                        break
 
-                line_total = qty_val * price_val
-                total_amount += line_total
-                line_items.append(
-                    {
-                        "meat_item_id": int(item_id),
-                        "name": item_row["name"],
-                        "quantity": qty_val,
-                        "unit_price": price_val,
-                        "line_total": line_total,
-                    }
-                )
+                    line_total = qty_val * price_val
+                    total_amount += line_total
+                    line_items.append(
+                        {
+                            "meat_item_id": int(item_id),
+                            "name": item_row["name"],
+                            "quantity": qty_val,
+                            "unit_price": price_val,
+                            "line_total": line_total,
+                        }
+                    )
 
             if error:
+                conn.close()
                 flash(error, "danger")
                 return render_template(
                     "new_sale.html", meat_items=meat_items, customer_name=customer_name
                 )
 
-            # Persist sale and update inventory in a single transaction
-            conn = get_db()
-            cur = conn.cursor()
-            now_iso = datetime.now().isoformat()
-            cur.execute(
-                """
-                INSERT INTO sales (sale_datetime, user_id, customer_name, total_amount)
-                VALUES (?, ?, ?, ?)
-                """,
-                (now_iso, g.user["id"], customer_name or None, total_amount),
-            )
-            sale_id = cur.lastrowid
-
-            for li in line_items:
+            try:
+                # Persist sale and update inventory in a single transaction
+                now_iso = datetime.now().isoformat()
                 cur.execute(
                     """
-                    INSERT INTO sale_items
-                    (sale_id, meat_item_id, quantity, unit_price, line_total)
-                    VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO sales (sale_datetime, user_id, customer_name, total_amount)
+                    VALUES (?, ?, ?, ?)
                     """,
-                    (
-                        sale_id,
-                        li["meat_item_id"],
-                        li["quantity"],
-                        li["unit_price"],
-                        li["line_total"],
-                    ),
+                    (now_iso, g.user["id"], customer_name or None, total_amount),
                 )
-                # Deduct stock
-                cur.execute(
-                    """
-                    UPDATE meat_items
-                    SET stock_quantity = stock_quantity - ?
-                    WHERE id = ?
-                    """,
-                    (li["quantity"], li["meat_item_id"]),
-                )
+                sale_id = cur.lastrowid
 
-            conn.commit()
-            conn.close()
+                for li in line_items:
+                    cur.execute(
+                        """
+                        INSERT INTO sale_items
+                        (sale_id, meat_item_id, quantity, unit_price, line_total)
+                        VALUES (?, ?, ?, ?, ?)
+                        """,
+                        (
+                            sale_id,
+                            li["meat_item_id"],
+                            li["quantity"],
+                            li["unit_price"],
+                            li["line_total"],
+                        ),
+                    )
+                    # Deduct stock
+                    cur.execute(
+                        """
+                        UPDATE meat_items
+                        SET stock_quantity = stock_quantity - ?
+                        WHERE id = ?
+                        """,
+                        (li["quantity"], li["meat_item_id"]),
+                    )
 
-            flash("Sale recorded successfully.", "success")
-            return redirect(url_for("sale_receipt", sale_id=sale_id))
+                conn.commit()
+                conn.close()
+                flash("Sale recorded successfully.", "success")
+                return redirect(url_for("sale_receipt", sale_id=sale_id))
+            except Exception as e:
+                conn.rollback()
+                conn.close()
+                flash(f"An error occurred: {str(e)}", "danger")
+                return render_template("new_sale.html", meat_items=meat_items)
 
         conn.close()
         return render_template("new_sale.html", meat_items=meat_items)

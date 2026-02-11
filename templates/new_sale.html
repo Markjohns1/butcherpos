@@ -169,12 +169,22 @@
   // Direct Input Change
   function setQty(id, value) {
     if (!cart[id]) return;
+
+    // If empty, set to 0 but keep the input empty visually if possible
+    if (value === "") {
+      cart[id].qty = 0;
+      calculateTotals();
+      syncHiddenInputs();
+      return;
+    }
+
     const qty = parseFloat(value);
 
-    if (isNaN(qty) || qty <= 0) {
+    if (isNaN(qty) || qty < 0) {
       cart[id].qty = 0;
     } else if (qty > cart[id].stock) {
       cart[id].qty = cart[id].stock;
+      // Optionally alert here or just cap it
     } else {
       cart[id].qty = qty;
     }
@@ -238,7 +248,16 @@
                 </div>
                 <div class="d-flex align-items-center gap-1 bg-black rounded border border-secondary p-1">
                     <button type="button" class="btn btn-sm btn-link text-muted p-0 px-2 text-decoration-none" onclick="updateQty(${item.id}, -1)"><i class="fa-solid fa-minus fa-xs"></i></button>
-                    <input type="number" class="form-control form-control-sm qty-input border-0 shadow-none text-white text-center" value="${item.qty}" step="0.01" min="0" data-id="${item.id}" oninput="setQty(${item.id}, this.value)" style="width: 70px; background: transparent;">
+                    <input type="number" 
+                        class="form-control form-control-sm qty-input border-0 shadow-none text-white text-center" 
+                        value="${item.qty > 0 ? item.qty : ''}" 
+                        placeholder="Enter ${item.unit}"
+                        step="0.01" 
+                        min="0" 
+                        data-id="${item.id}" 
+                        oninput="setQty(${item.id}, this.value)" 
+                        onblur="updateCartUI()"
+                        style="width: 85px; background: transparent;">
                     <button type="button" class="btn btn-sm btn-link text-muted p-0 px-2 text-decoration-none" onclick="updateQty(${item.id}, 1)"><i class="fa-solid fa-plus fa-xs"></i></button>
                 </div>
                 <div class="fw-bold ms-3 text-end font-monospace text-white line-total" data-id="${item.id}" style="min-width: 70px;">${formatMoney(lineTotal)}</div>`;
